@@ -18,5 +18,19 @@ public class ElementFactory {
 		return new Element(Config.getInstance().grassTextureFilename,
 				Config.getInstance().defaultElementDimension);
 	}
+	
+	public static Element createSandElement() {
+		return new Element(Config.getInstance().sandTextureFilename,
+				Config.getInstance().defaultElementDimension);
+	}
 
+	public static Element createTreeElement() {
+		return new Element(Config.getInstance().treeTextureFilename,
+				Config.getInstance().defaultElementDimension);
+	}
+	
+	public static Element createWaterElement() {
+		return new Element(Config.getInstance().waterTextureFilename,
+				Config.getInstance().defaultElementDimension);
+	}
 }
