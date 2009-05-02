@@ -46,7 +46,34 @@ public class MainWindow extends JFrame {
 		                .setElement(ElementFactory.createSoilElement());
 		
 		try {
+			for (int i = 0; i < 23; i++)
+				map.moveCursorRightAndSet(ElementFactory.createGrassElement());
 			map.moveCursorDownAndSet(ElementFactory.createGrassElement());
+			for (int i = 0; i < 23; i++)
+				map.moveCursorLeftAndSet(ElementFactory.createGrassElement());
+			map.moveCursorDownAndSet(ElementFactory.createTreeElement());
+			for (int i = 0; i < 23; i++)
+				map.moveCursorRightAndSet(ElementFactory.createTreeElement());
+			map.moveCursorDownAndSet(ElementFactory.createTreeElement());
+			for (int i = 0; i < 23; i++)
+				map.moveCursorLeftAndSet(ElementFactory.createTreeElement());
+			for (int i = 0; i < 23; i++)
+				map.moveCursorRightAndSet(ElementFactory.createSandElement());
+			map.moveCursorDownAndSet(ElementFactory.createSandElement());
+			for (int i = 0; i < 23; i++)
+				map.moveCursorLeftAndSet(ElementFactory.createSandElement());
+			map.moveCursorDownAndSet(ElementFactory.createWaterElement());
+			for (int i = 0; i < 23; i++)
+				map.moveCursorRightAndSet(ElementFactory.createWaterElement());
+			map.moveCursorDownAndSet(ElementFactory.createWaterElement());
+			for (int i = 0; i < 23; i++)
+				map.moveCursorLeftAndSet(ElementFactory.createWaterElement());
+			map.moveCursorDownAndSet(ElementFactory.createSoilElement());
+			for (int i = 0; i < 23; i++)
+				map.moveCursorRightAndSet(ElementFactory.createSoilElement());
+			map.moveCursorDownAndSet(ElementFactory.createSoilElement());
+			for (int i = 0; i < 23; i++)
+				map.moveCursorLeftAndSet(ElementFactory.createSoilElement());
 		}
 		catch (CursorBeyondMapException e) {
 			JOptionPane.showMessageDialog(this, 
