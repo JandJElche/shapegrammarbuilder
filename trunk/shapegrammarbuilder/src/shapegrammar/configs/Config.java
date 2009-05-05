@@ -5,7 +5,7 @@ import java.awt.*;
 public class Config {
 
 	public String defaultApplicationTitle = "Shape Grammar Builder";
-	public Dimension defaultWindowDimension = new Dimension(800, 600); 
+	public Dimension defaultWindowDimension = new Dimension(800, 700); 
 	public Dimension defaultElementDimension = new Dimension(32, 32);
 	public Color defaultMapColor = Color.BLACK;
 	public Color defaultCursorBorderColor = Color.RED;
