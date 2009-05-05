@@ -1,9 +1,16 @@
 package shapegrammar.views;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.border.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.TitledBorder;
 
 import shapegrammar.configs.Config;
 import shapegrammar.exceptions.CursorBeyondMapException;
@@ -14,18 +21,10 @@ import shapegrammar.models.Map;
 public class MainWindow extends JFrame {
         
         Config config = Config.getInstance();
-
+        
         // --- components ---
         private JPanel drawingPanel;
         private JPanel controlsPanel;
-        private JPanel infoPanel;
-        private JLabel infoLabel;
-        
-    	private JButton grassButton;
-    	private JButton sandButton;
-    	private JButton soilButton;
-    	private JButton treeButton;
-    	private JButton waterButton;
     	
     	private JButton grassButtonN;
     	private JButton grassButtonE;
@@ -51,6 +50,9 @@ public class MainWindow extends JFrame {
     	private JButton waterButtonE;
     	private JButton waterButtonS;
     	private JButton waterButtonW;
+    	
+    	private Map map;
+        private Printer printer;
         
         public MainWindow() {
                 initSysUI();
@@ -58,58 +60,12 @@ public class MainWindow extends JFrame {
                 initComponents();
                 addComponentsToDrawingPane();
                 initListeners();
+                //resetControlsPanel();
                 setVisible(true);
                 
-                // zabawa :P
-                
-                Map map = new Map(new Dimension(24,16), config.defaultStart);
-                Printer printer = new Printer(drawingPanel.getGraphics(), map);
-                
-                map.getFields()[config.defaultStart.x][config.defaultStart.y]
-                                .setElement(ElementFactory.createSoilElement());
-                
-                try {
-                        for (int i = 0; i < 23; i++)
-                                map.moveCursorRightAndSet(ElementFactory.createGrassElement());
-                        map.moveCursorDownAndSet(ElementFactory.createGrassElement());
-                        for (int i = 0; i < 23; i++)
-                                map.moveCursorLeftAndSet(ElementFactory.createGrassElement());
-                        map.moveCursorDownAndSet(ElementFactory.createTreeElement());
-                        for (int i = 0; i < 23; i++)
-                                map.moveCursorRightAndSet(ElementFactory.createTreeElement());
-                        map.moveCursorDownAndSet(ElementFactory.createTreeElement());
-                        for (int i = 0; i < 23; i++)
-                                map.moveCursorLeftAndSet(ElementFactory.createTreeElement());
-                        for (int i = 0; i < 23; i++)
-                                map.moveCursorRightAndSet(ElementFactory.createSandElement());
-                        map.moveCursorDownAndSet(ElementFactory.createSandElement());
-                        for (int i = 0; i < 23; i++)
-                                map.moveCursorLeftAndSet(ElementFactory.createSandElement());
-                        map.moveCursorDownAndSet(ElementFactory.createWaterElement());
-                        for (int i = 0; i < 23; i++)
-                                map.moveCursorRightAndSet(ElementFactory.createWaterElement());
-                        map.moveCursorDownAndSet(ElementFactory.createWaterElement());
-                        for (int i = 0; i < 23; i++)
-                                map.moveCursorLeftAndSet(ElementFactory.createWaterElement());
-                        map.moveCursorDownAndSet(ElementFactory.createSoilElement());
-                        for (int i = 0; i < 23; i++)
-                                map.moveCursorRightAndSet(ElementFactory.createSoilElement());
-                        map.moveCursorDownAndSet(ElementFactory.createSoilElement());
-                        for (int i = 0; i < 23; i++)
-                                map.moveCursorLeftAndSet(ElementFactory.createSoilElement());
-                }
-                catch (CursorBeyondMapException e) {
-                        JOptionPane.showMessageDialog(this, 
-                                        "Sorry, cursor would go beyond the map.\n" +
-                                        "Current cursor's position: " +
-                                        + e.getCursorPosition().x + ", " +
-                                        + e.getCursorPosition().y, 
-                                        "Error", JOptionPane.ERROR_MESSAGE);
-                }
-                
+                map = new Map(new Dimension(24,16), config.defaultStart);
+                printer = new Printer(drawingPanel.getGraphics(), map);
                 printer.printAll();
-                
-                // i po zabawie
         }
         
         public static void main(String[] args) {
@@ -153,16 +109,7 @@ public class MainWindow extends JFrame {
                 
                 controlsPanel = new JPanel();
                 controlsPanel.setBorder(new TitledBorder("Controls"));
-                controlsPanel.setLayout(new GridLayout(1,2));
-                
-                infoLabel = new JLabel("Info:");
-                infoPanel = new JPanel();
-                
-                grassButton 	= new JButton("Grass");
-        		sandButton		= new JButton("Sand");
-        		soilButton		= new JButton("Soil");
-        		treeButton		= new JButton("Tree");
-        		waterButton		= new JButton("Water");
+                controlsPanel.setLayout(new GridLayout(5,4));
         		
         		grassButtonN = new JButton("Grass - North");
         		grassButtonE = new JButton("Grass - East");
@@ -191,51 +138,36 @@ public class MainWindow extends JFrame {
         }
         
         private void addComponentsToDrawingPane() {
-                this.add(infoPanel, BorderLayout.NORTH);
-                infoPanel.add(infoLabel);
                 this.add(drawingPanel, BorderLayout.CENTER);
                 this.add(controlsPanel, BorderLayout.SOUTH);
-                
-                controlsPanel.add(grassButton);
-    			controlsPanel.add(sandButton);
-    			controlsPanel.add(soilButton);
-    			controlsPanel.add(treeButton);
-    			controlsPanel.add(waterButton);
     			
-    			controlsPanel.remove(grassButtonN);
-    			controlsPanel.remove(grassButtonE);
-    			controlsPanel.remove(grassButtonS);
-    			controlsPanel.remove(grassButtonW);
+    			controlsPanel.add(grassButtonN);
+    			controlsPanel.add(grassButtonE);
+    			controlsPanel.add(grassButtonS);
+    			controlsPanel.add(grassButtonW);
     			
-    			controlsPanel.remove(sandButtonN);
-    			controlsPanel.remove(sandButtonE);
-    			controlsPanel.remove(sandButtonS);
-    			controlsPanel.remove(sandButtonW);
+    			controlsPanel.add(sandButtonN);
+    			controlsPanel.add(sandButtonE);
+    			controlsPanel.add(sandButtonS);
+    			controlsPanel.add(sandButtonW);
     			
-    			controlsPanel.remove(soilButtonN);
-    			controlsPanel.remove(soilButtonE);
-    			controlsPanel.remove(soilButtonS);
-    			controlsPanel.remove(soilButtonW);
+    			controlsPanel.add(soilButtonN);
+    			controlsPanel.add(soilButtonE);
+    			controlsPanel.add(soilButtonS);
+    			controlsPanel.add(soilButtonW);
     			
-    			controlsPanel.remove(treeButtonN);
-    			controlsPanel.remove(treeButtonE);
-    			controlsPanel.remove(treeButtonS);
-    			controlsPanel.remove(treeButtonW);
+    			controlsPanel.add(waterButtonN);
+    			controlsPanel.add(waterButtonE);
+    			controlsPanel.add(waterButtonS);
+    			controlsPanel.add(waterButtonW);
     			
-    			controlsPanel.remove(waterButtonN);
-    			controlsPanel.remove(waterButtonE);
-    			controlsPanel.remove(waterButtonS);
-    			controlsPanel.remove(waterButtonW);
-    			
-    			
+    			controlsPanel.add(treeButtonN);
+    			controlsPanel.add(treeButtonE);
+    			controlsPanel.add(treeButtonS);
+    			controlsPanel.add(treeButtonW);
         }
         
     	private void initListeners() {
-    		grassButton.addActionListener( new ActionListener() {
-    			public void actionPerformed(java.awt.event.ActionEvent e) {
-    				grassButtonAction();
-    			}
-    		});
     		grassButtonN.addActionListener( new ActionListener() {
     			public void actionPerformed(java.awt.event.ActionEvent e) {
     				grassButtonNAction();
@@ -254,11 +186,6 @@ public class MainWindow extends JFrame {
     		grassButtonW.addActionListener( new ActionListener() {
     			public void actionPerformed(java.awt.event.ActionEvent e) {
     				grassButtonWAction();
-    			}
-    		});
-    		sandButton.addActionListener( new ActionListener() {
-    			public void actionPerformed(java.awt.event.ActionEvent e) {
-    				sandButtonAction();
     			}
     		});
     		sandButtonN.addActionListener( new ActionListener() {
@@ -281,12 +208,6 @@ public class MainWindow extends JFrame {
     				sandButtonWAction();
     			}
     		});
-    		soilButton.addActionListener( new ActionListener() {
-    			public void actionPerformed(java.awt.event.ActionEvent e) {
-    				soilButtonAction();
-    			
-    			}
-    		});
     		soilButtonN.addActionListener( new ActionListener() {
     			public void actionPerformed(java.awt.event.ActionEvent e) {
     				soilButtonNAction();
@@ -307,11 +228,6 @@ public class MainWindow extends JFrame {
     				soilButtonWAction();
     			}
     		});
-    		treeButton.addActionListener( new ActionListener() {
-    			public void actionPerformed(java.awt.event.ActionEvent e) {
-    				treeButtonAction();
-    			}
-    		});
     		treeButtonN.addActionListener( new ActionListener() {
     			public void actionPerformed(java.awt.event.ActionEvent e) {
     				treeButtonNAction();
@@ -330,11 +246,6 @@ public class MainWindow extends JFrame {
     		treeButtonW.addActionListener( new ActionListener() {
     			public void actionPerformed(java.awt.event.ActionEvent e) {
     				treeButtonWAction();
-    			}
-    		});
-    		waterButton.addActionListener( new ActionListener() {
-    			public void actionPerformed(java.awt.event.ActionEvent e) {
-    				waterButtonAction();
     			}
     		});
     		waterButtonN.addActionListener( new ActionListener() {
@@ -359,127 +270,219 @@ public class MainWindow extends JFrame {
     		});
     	}
 
-    	protected void waterButtonWAction() {
-    		// TODO Auto-generated method stub
-    		
-    	}
-
     	protected void waterButtonSAction() {
-    		// TODO Auto-generated method stub
-    		
+    		try {
+				map.moveCursorDownAndSet(ElementFactory.createWaterElement());
+			}
+    		catch (CursorBeyondMapException e) {
+				e.printStackTrace();
+			}
+    		printer.printAll();
+    	}
+    	
+    	protected void waterButtonWAction() {
+    		try {
+				map.moveCursorLeftAndSet(ElementFactory.createWaterElement());
+			}
+    		catch (CursorBeyondMapException e) {
+				e.printStackTrace();
+			}
+    		printer.printAll();
     	}
 
     	protected void waterButtonEAction() {
-    		// TODO Auto-generated method stub
-    		
+    		try {
+				map.moveCursorRightAndSet(ElementFactory.createWaterElement());
+			}
+    		catch (CursorBeyondMapException e) {
+				e.printStackTrace();
+			}
+    		printer.printAll();
     	}
 
     	protected void waterButtonNAction() {
-    		// TODO Auto-generated method stub
-    		
-    	}
-
-    	protected void waterButtonAction() {
-    		// TODO Auto-generated method stub
-    		
-    	}
-
-    	protected void treeButtonWAction() {
-    		// TODO Auto-generated method stub
-    		
-    	}
-
-    	protected void treeButtonSAction() {
-    		// TODO Auto-generated method stub
-    		
-    	}
-
-    	protected void treeButtonEAction() {
-    		// TODO Auto-generated method stub
-    		
-    	}
-
-    	protected void treeButtonNAction() {
-    		// TODO Auto-generated method stub
-    		
+    		try {
+				map.moveCursorUpAndSet(ElementFactory.createWaterElement());
+			}
+    		catch (CursorBeyondMapException e) {
+				e.printStackTrace();
+			}
+    		printer.printAll();
     	}
 
     	protected void treeButtonAction() {
-    		// TODO Auto-generated method stub
     		
     	}
-
-    	protected void soilButtonWAction() {
-    		// TODO Auto-generated method stub
-    		
+    	
+    	protected void treeButtonWAction() {
+    		try {
+				map.moveCursorLeftAndSet(ElementFactory.createTreeElement());
+			}
+    		catch (CursorBeyondMapException e) {
+				e.printStackTrace();
+			}
+    		printer.printAll();
     	}
 
-    	protected void soilButtonSAction() {
-    		// TODO Auto-generated method stub
-    		
+    	protected void treeButtonSAction() {
+    		try {
+				map.moveCursorDownAndSet(ElementFactory.createTreeElement());
+			}
+    		catch (CursorBeyondMapException e) {
+				e.printStackTrace();
+			}
+    		printer.printAll();
     	}
 
-    	protected void soilButtonEAction() {
-    		// TODO Auto-generated method stub
-    		
+    	protected void treeButtonEAction() {
+    		try {
+				map.moveCursorRightAndSet(ElementFactory.createTreeElement());
+			}
+    		catch (CursorBeyondMapException e) {
+				e.printStackTrace();
+			}
+    		printer.printAll();
     	}
 
-    	protected void soilButtonNAction() {
-    		// TODO Auto-generated method stub
-    		
+    	protected void treeButtonNAction() {
+    		try {
+				map.moveCursorUpAndSet(ElementFactory.createTreeElement());
+			}
+    		catch (CursorBeyondMapException e) {
+				e.printStackTrace();
+			}
+    		printer.printAll();
     	}
 
     	protected void soilButtonAction() {
-    		// TODO Auto-generated method stub
     		
     	}
-
-    	protected void sandButtonWAction() {
-    		// TODO Auto-generated method stub
-    		
+    	
+    	protected void soilButtonWAction() {
+    		try {
+				map.moveCursorLeftAndSet(ElementFactory.createSoilElement());
+			}
+    		catch (CursorBeyondMapException e) {
+				e.printStackTrace();
+			}
+    		printer.printAll();
     	}
 
-    	protected void sandButtonSAction() {
-    		// TODO Auto-generated method stub
-    		
+    	protected void soilButtonSAction() {
+    		try {
+				map.moveCursorDownAndSet(ElementFactory.createSoilElement());
+			}
+    		catch (CursorBeyondMapException e) {
+				e.printStackTrace();
+			}
+    		printer.printAll();
     	}
 
-    	protected void sandButtonEAction() {
-    		// TODO Auto-generated method stub
-    		
+    	protected void soilButtonEAction() {
+    		try {
+				map.moveCursorRightAndSet(ElementFactory.createSoilElement());
+			}
+    		catch (CursorBeyondMapException e) {
+				e.printStackTrace();
+			}
+    		printer.printAll();
     	}
 
-    	protected void sandButtonNAction() {
-    		// TODO Auto-generated method stub
-    		
+    	protected void soilButtonNAction() {
+    		try {
+				map.moveCursorUpAndSet(ElementFactory.createSoilElement());
+			}
+    		catch (CursorBeyondMapException e) {
+				e.printStackTrace();
+			}
+    		printer.printAll();
     	}
 
     	protected void sandButtonAction() {
-    		// TODO Auto-generated method stub
+    		
+    	}
+    	
+    	protected void sandButtonWAction() {
+    		try {
+				map.moveCursorLeftAndSet(ElementFactory.createSandElement());
+			}
+    		catch (CursorBeyondMapException e) {
+				e.printStackTrace();
+			}
+    		printer.printAll();
+    	}
+
+    	protected void sandButtonSAction() {
+    		try {
+				map.moveCursorDownAndSet(ElementFactory.createSandElement());
+			}
+    		catch (CursorBeyondMapException e) {
+				e.printStackTrace();
+			}
+    		printer.printAll();
+    	}
+
+    	protected void sandButtonEAction() {
+    		try {
+				map.moveCursorRightAndSet(ElementFactory.createSandElement());
+			}
+    		catch (CursorBeyondMapException e) {
+				e.printStackTrace();
+			}
+    		printer.printAll();
+    	}
+
+    	protected void sandButtonNAction() {
+    		try {
+				map.moveCursorUpAndSet(ElementFactory.createSandElement());
+			}
+    		catch (CursorBeyondMapException e) {
+				e.printStackTrace();
+			}
+    		printer.printAll();
+    	}
+
+    	protected void grassButtonAction() {
     		
     	}
 
     	protected void grassButtonWAction() {
-    		// TODO Auto-generated method stub
-    		
+    		try {
+				map.moveCursorLeftAndSet(ElementFactory.createGrassElement());
+			}
+    		catch (CursorBeyondMapException e) {
+				e.printStackTrace();
+			}
+    		printer.printAll();
     	}
 
     	protected void grassButtonSAction() {
-    		// TODO Auto-generated method stub
-    		
+    		try {
+				map.moveCursorDownAndSet(ElementFactory.createGrassElement());
+			}
+    		catch (CursorBeyondMapException e) {
+				e.printStackTrace();
+			}
+    		printer.printAll();
     	}
 
     	protected void grassButtonEAction() {
-    		// TODO Auto-generated method stub
-    		
+    		try {
+				map.moveCursorRightAndSet(ElementFactory.createGrassElement());
+			}
+    		catch (CursorBeyondMapException e) {
+				e.printStackTrace();
+			}
+    		printer.printAll();
     	}
 
     	protected void grassButtonNAction() {
-    		// TODO Auto-generated method stub
-    		
+    		try {
+				map.moveCursorUpAndSet(ElementFactory.createGrassElement());
+			}
+    		catch (CursorBeyondMapException e) {
+				e.printStackTrace();
+			}
+    		printer.printAll();
     	}
-
-    	protected void grassButtonAction() {
-    		// TODO Auto-generated method stub
-    	}
-    }
+}
