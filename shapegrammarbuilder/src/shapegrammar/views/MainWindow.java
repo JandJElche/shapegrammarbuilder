@@ -60,7 +60,6 @@ public class MainWindow extends JFrame {
                 initComponents();
                 addComponentsToDrawingPane();
                 initListeners();
-                //resetControlsPanel();
                 setVisible(true);
                 
                 map = new Map(new Dimension(24,16), config.defaultStart);
