@@ -106,18 +106,9 @@ public class Gate {
 		
 		canvasReference.drawString(name, startPoint.x+txtPlusX, 
 				startPoint.y+txtPlusY);
-		canvasReference.setColor(Config.getInstance().defaultMarkerColor);
-		canvasReference.fillRect(marker.x, marker.y, 2, 2);
+		drawMarker();
 		
 		canvasReference.setColor(oldColor);
-		return marker;
-	}
-
-	public void setMarker(Point marker) {
-		this.marker = marker;
-	}
-
-	public Point getMarker() {
 		return marker;
 	}
 
@@ -134,5 +125,25 @@ public class Gate {
 		canvasReference.drawLine(x2, y1, x2, y2);
 		canvasReference.drawLine(x2, y2, x1, y2);
 		canvasReference.drawLine(x1, y2, x1, y1);
+	}
+	
+	private void drawMarker() {
+		Color oldColor = canvasReference.getColor();
+		canvasReference.setColor(Config.getInstance().defaultMarkerColor);
+		canvasReference.fillRect(marker.x, marker.y, 2, 2);
+		canvasReference.setColor(oldColor);
+	}
+
+	public Point getFreeMarkerPosition() {
+		Point result = new Point();
+		if (markerPosition == MarkerPosition.LEFT) {
+			result.x = startPoint.x + markerRightStepX;
+			result.y = startPoint.y + markerRightStepY;
+		}
+		else if (markerPosition == MarkerPosition.RIGHT) {
+			result.x = startPoint.x + markerLeftStepX;
+			result.y = startPoint.y + markerLeftStepY;
+		}
+		return result;
 	}
 }

@@ -22,7 +22,8 @@ import shapegrammar.models.Wire;
 @SuppressWarnings("serial")
 public class MainWindow extends JFrame {
         
-        private Point startPoint = Config.getInstance().defautStartPoint; 
+        private Point startPoint = Config.getInstance().defautStartPoint;
+        private Gate lastGate;
         
         // --- components ---
         private JPanel drawingPanel;
@@ -33,6 +34,8 @@ public class MainWindow extends JFrame {
         private JButton orGateButton;
         private JButton norGateButton;
         private JButton wireButton;
+        
+        private JButton gotoLastGateButton;
         
         public MainWindow() {
                 initSysUI();
@@ -90,6 +93,8 @@ public class MainWindow extends JFrame {
                 orGateButton = new JButton("OR");
                 norGateButton = new JButton("NOR");
                 wireButton = new JButton("Wire");
+                
+                gotoLastGateButton = new JButton("Go to last gate's gree slot");
         }
         
         private void addComponents() {
@@ -101,6 +106,8 @@ public class MainWindow extends JFrame {
                 controlsPanel.add(orGateButton);
                 controlsPanel.add(norGateButton);
                 controlsPanel.add(wireButton);
+                
+                controlsPanel.add(gotoLastGateButton);
         }
         
     	private void initListeners() {
@@ -134,9 +141,19 @@ public class MainWindow extends JFrame {
     				wireButtonAction();
     			}
     		});
+    		gotoLastGateButton.addActionListener(new ActionListener() {
+    			@Override
+    			public void actionPerformed(ActionEvent e) {
+    				gotoLastGateButtonAction();
+    			}
+    		});
     	}
     	
-    	private Direction askForDirection() {
+    	protected void gotoLastGateButtonAction() {
+    		startPoint = lastGate.getFreeMarkerPosition();
+		}
+
+		private Direction askForDirection() {
     		String directionStr 
 			= JOptionPane.showInputDialog("Direction (N,E,S,W):");
 		
@@ -184,14 +201,15 @@ public class MainWindow extends JFrame {
 			MarkerPosition markerPosition = askForMarkerPosition();
 			if (markerPosition == null) return;
 			
-			Gate norGate = new Gate(
+			Gate gate = new Gate(
 					drawingPanel.getGraphics(),
 					startPoint,
 					direction,
 					markerPosition,
 					gateName
 			);
-			startPoint = norGate.draw();
+			startPoint = gate.draw();
+			lastGate = gate;
 		}
 		
 		protected void wireButtonAction() {
