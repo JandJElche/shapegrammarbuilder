@@ -37,9 +37,9 @@ public class Gate {
 		
 		if (direction == Direction.EAST) {
 			markerLeftStepX = 35;
-			markerLeftStepY = 3;
+			markerLeftStepY = 0;
 			markerRightStepX = 35;
-			markerRightStepY = 22;
+			markerRightStepY = 34;
 			txtPlusX = 6;
 			txtPlusY = 17;
 			rectStartX = startPoint.x;
@@ -49,9 +49,9 @@ public class Gate {
 		}
 		
 		else if (direction == Direction.SOUTH) {
-			markerLeftStepX = 22;
+			markerLeftStepX = 34;
 			markerLeftStepY = 35;
-			markerRightStepX = 3;
+			markerRightStepX = 0;
 			markerRightStepY = 35;
 			txtPlusX = 6;
 			txtPlusY = 17;
@@ -63,9 +63,9 @@ public class Gate {
 		
 		else if (direction == Direction.WEST) {
 			markerLeftStepX = -36;
-			markerLeftStepY = -7;
+			markerLeftStepY = -1;
 			markerRightStepX = -36;
-			markerRightStepY = -27;
+			markerRightStepY = -35;
 			txtPlusX = -30;
 			txtPlusY = -16;
 			rectStartX = startPoint.x;
@@ -75,9 +75,9 @@ public class Gate {
 		}
 		
 		else if (direction == Direction.NORTH) {
-			markerLeftStepX = 6;
+			markerLeftStepX = 0;
 			markerLeftStepY = -36;
-			markerRightStepX = 23;
+			markerRightStepX = 34;
 			markerRightStepY = -36;
 			txtPlusX = 6;
 			txtPlusY = -14;

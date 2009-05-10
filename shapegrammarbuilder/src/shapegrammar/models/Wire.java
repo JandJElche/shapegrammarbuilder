@@ -24,20 +24,20 @@ public class Wire {
 		this.marker = startPoint;
 		
 		if (this.direction == Direction.EAST) {
-			lineStepX = 25;
+			lineStepX = 35;
 			lineStepY = 0;
 		}
 		else if (this.direction == Direction.SOUTH) {
 			lineStepX = 0;
-			lineStepY = 25;
+			lineStepY = 35;
 		}
 		else if (this.direction == Direction.WEST) {
-			lineStepX = -25;
+			lineStepX = -35;
 			lineStepY = 0;
 		}
 		else if (this.direction == Direction.NORTH) {
 			lineStepX = 0;
-			lineStepY = -25;
+			lineStepY = -35;
 		}
 	}
 	
