@@ -4,20 +4,13 @@ import java.awt.*;
 
 public class Config {
 
-	public String defaultApplicationTitle = "Shape Grammar Builder";
+	public String defaultApplicationTitle = "Logical Gates Shape Grammar";
 	public Dimension defaultWindowDimension = new Dimension(800, 700); 
-	public Dimension defaultElementDimension = new Dimension(32, 32);
-	public Color defaultMapColor = Color.BLACK;
-	public Color defaultCursorBorderColor = Color.RED;
-	
-	public String grassTextureFilename = "src/resources/grass.png";
-	public String soilTextureFilename  = "src/resources/soil.png";
-	public String sandTextureFilename  = "src/resources/sand.png";
-	public String treeTextureFilename  = "src/resources/tree.png";
-	public String waterTextureFilename  = "src/resources/water.png";
-	public String nullTextureFilename  = "src/resources/null.png";
-	
-	public Point defaultStart = new Point(0,0); 
+	public Dimension defaultElementDimension = new Dimension(64, 32);
+	public Color defaultMapColor = Color.WHITE;
+	public Color defaultBrushColor = Color.BLACK;
+	public Color defaultMarkerColor = Color.RED;
+	public Point defautStartPoint = new Point(100,100);
 	
 	// ----------------------------------------------------
 	

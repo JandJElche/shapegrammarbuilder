@@ -1,73 +1,49 @@
 package shapegrammar.views;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.TitledBorder;
 
 import shapegrammar.configs.Config;
-import shapegrammar.exceptions.CursorBeyondMapException;
-import shapegrammar.models.ElementFactory;
-import shapegrammar.models.Map;
+import shapegrammar.models.Direction;
+import shapegrammar.models.Gate;
+import shapegrammar.models.MarkerPosition;
+import shapegrammar.models.Wire;
 
 @SuppressWarnings("serial")
 public class MainWindow extends JFrame {
         
-        Config config = Config.getInstance();
+        private Point startPoint = Config.getInstance().defautStartPoint; 
         
         // --- components ---
         private JPanel drawingPanel;
         private JPanel controlsPanel;
-    	
-    	private JButton grassButtonN;
-    	private JButton grassButtonE;
-    	private JButton grassButtonS;
-    	private JButton grassButtonW;
-    	
-    	private JButton sandButtonN;
-    	private JButton sandButtonE;
-    	private JButton sandButtonS;
-    	private JButton sandButtonW;
-    	
-    	private JButton soilButtonN;
-    	private JButton soilButtonE;
-    	private JButton soilButtonS;
-    	private JButton soilButtonW;
-    	
-    	private JButton treeButtonN;
-    	private JButton treeButtonE;
-    	private JButton treeButtonS;
-    	private JButton treeButtonW;
-
-    	private JButton waterButtonN;
-    	private JButton waterButtonE;
-    	private JButton waterButtonS;
-    	private JButton waterButtonW;
-    	
-    	private Map map;
-        private Printer printer;
+        
+        private JButton andGateButton;
+        private JButton nandGateButton;
+        private JButton orGateButton;
+        private JButton norGateButton;
+        private JButton wireButton;
         
         public MainWindow() {
                 initSysUI();
                 initMainWindow();
                 initComponents();
-                addComponentsToDrawingPane();
+                addComponents();
                 initListeners();
                 setVisible(true);
-                
-                map = new Map(new Dimension(24,16), config.defaultStart);
-                printer = new Printer(drawingPanel.getGraphics(), map);
-                printer.printAll();
         }
-        
-        public static void main(String[] args) {
+
+		public static void main(String[] args) {
                 new MainWindow();
         }
         
@@ -94,8 +70,8 @@ public class MainWindow extends JFrame {
         }
         
         private void initMainWindow() {
-                setTitle(config.defaultApplicationTitle);
-                setSize(config.defaultWindowDimension);
+                setTitle(Config.getInstance().defaultApplicationTitle);
+                setSize(Config.getInstance().defaultWindowDimension);
                 setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 setLocationRelativeTo(null);
                 setResizable(false);
@@ -104,384 +80,130 @@ public class MainWindow extends JFrame {
         
         private void initComponents() {
                 drawingPanel = new JPanel();
-                drawingPanel.setBackground(config.defaultMapColor);
+                drawingPanel.setBackground(Config.getInstance().defaultMapColor);
                 
                 controlsPanel = new JPanel();
                 controlsPanel.setBorder(new TitledBorder("Controls"));
-                controlsPanel.setLayout(new GridLayout(5,4));
-        		
-        		grassButtonN = new JButton("Grass - North");
-        		grassButtonE = new JButton("Grass - East");
-        		grassButtonS = new JButton("Grass - South");
-        		grassButtonW = new JButton("Grass - West");
-        		
-        		sandButtonN = new JButton("Sand - North");
-        		sandButtonE = new JButton("Sand - East");
-        		sandButtonS = new JButton("Sand - South");
-        		sandButtonW = new JButton("Sand - West");
-        		
-        		soilButtonN = new JButton("Soil - North");
-        		soilButtonE = new JButton("Soil - East");
-        		soilButtonS = new JButton("Soil - South");
-        		soilButtonW = new JButton("Soil - West");
-        		
-        		treeButtonN = new JButton("Tree - North");
-        		treeButtonE = new JButton("Tree - East");
-        		treeButtonS = new JButton("Tree - South");
-        		treeButtonW = new JButton("Tree - West");
-        		
-        		waterButtonN = new JButton("Water - North");
-        		waterButtonE = new JButton("Water - East");
-        		waterButtonS = new JButton("Water - South");
-        		waterButtonW = new JButton("Water - West");
+                
+                andGateButton = new JButton("AND");
+                nandGateButton = new JButton("NAND");
+                orGateButton = new JButton("OR");
+                norGateButton = new JButton("NOR");
+                wireButton = new JButton("Wire");
         }
         
-        private void addComponentsToDrawingPane() {
+        private void addComponents() {
                 this.add(drawingPanel, BorderLayout.CENTER);
                 this.add(controlsPanel, BorderLayout.SOUTH);
-    			
-    			controlsPanel.add(grassButtonN);
-    			controlsPanel.add(grassButtonE);
-    			controlsPanel.add(grassButtonS);
-    			controlsPanel.add(grassButtonW);
-    			
-    			controlsPanel.add(sandButtonN);
-    			controlsPanel.add(sandButtonE);
-    			controlsPanel.add(sandButtonS);
-    			controlsPanel.add(sandButtonW);
-    			
-    			controlsPanel.add(soilButtonN);
-    			controlsPanel.add(soilButtonE);
-    			controlsPanel.add(soilButtonS);
-    			controlsPanel.add(soilButtonW);
-    			
-    			controlsPanel.add(waterButtonN);
-    			controlsPanel.add(waterButtonE);
-    			controlsPanel.add(waterButtonS);
-    			controlsPanel.add(waterButtonW);
-    			
-    			controlsPanel.add(treeButtonN);
-    			controlsPanel.add(treeButtonE);
-    			controlsPanel.add(treeButtonS);
-    			controlsPanel.add(treeButtonW);
+                
+                controlsPanel.add(andGateButton);
+                controlsPanel.add(nandGateButton);
+                controlsPanel.add(orGateButton);
+                controlsPanel.add(norGateButton);
+                controlsPanel.add(wireButton);
         }
         
     	private void initListeners() {
-    		grassButtonN.addActionListener( new ActionListener() {
-    			public void actionPerformed(java.awt.event.ActionEvent e) {
-    				grassButtonNAction();
+    		andGateButton.addActionListener(new ActionListener() {
+    			@Override
+    			public void actionPerformed(ActionEvent e) {
+    				gateButtonAction("AND");
     			}
     		});
-    		grassButtonE.addActionListener( new ActionListener() {
-    			public void actionPerformed(java.awt.event.ActionEvent e) {
-    				grassButtonEAction();
+    		nandGateButton.addActionListener(new ActionListener() {
+    			@Override
+    			public void actionPerformed(ActionEvent e) {
+    				gateButtonAction("NAND");	
     			}
     		});
-    		grassButtonS.addActionListener( new ActionListener() {
-    			public void actionPerformed(java.awt.event.ActionEvent e) {
-    				grassButtonSAction();
+    		orGateButton.addActionListener(new ActionListener() {
+    			@Override
+    			public void actionPerformed(ActionEvent e) {
+    				gateButtonAction("OR");
     			}
     		});
-    		grassButtonW.addActionListener( new ActionListener() {
-    			public void actionPerformed(java.awt.event.ActionEvent e) {
-    				grassButtonWAction();
+    		norGateButton.addActionListener(new ActionListener() {
+    			@Override
+    			public void actionPerformed(ActionEvent e) {
+    				gateButtonAction("NOR");
     			}
     		});
-    		sandButtonN.addActionListener( new ActionListener() {
-    			public void actionPerformed(java.awt.event.ActionEvent e) {
-    				sandButtonNAction();
+    		wireButton.addActionListener(new ActionListener() {
+    			@Override
+    			public void actionPerformed(ActionEvent e) {
+    				wireButtonAction();
     			}
     		});
-    		sandButtonE.addActionListener( new ActionListener() {
-    			public void actionPerformed(java.awt.event.ActionEvent e) {
-    				sandButtonEAction();
-    			}
-    		});
-    		sandButtonS.addActionListener( new ActionListener() {
-    			public void actionPerformed(java.awt.event.ActionEvent e) {
-    				sandButtonSAction();
-    			}
-    		});
-    		sandButtonW.addActionListener( new ActionListener() {
-    			public void actionPerformed(java.awt.event.ActionEvent e) {
-    				sandButtonWAction();
-    			}
-    		});
-    		soilButtonN.addActionListener( new ActionListener() {
-    			public void actionPerformed(java.awt.event.ActionEvent e) {
-    				soilButtonNAction();
-    			}
-    		});
-    		soilButtonE.addActionListener( new ActionListener() {
-    			public void actionPerformed(java.awt.event.ActionEvent e) {
-    				soilButtonEAction();
-    			}
-    		});
-    		soilButtonS.addActionListener( new ActionListener() {
-    			public void actionPerformed(java.awt.event.ActionEvent e) {
-    				soilButtonSAction();
-    			}
-    		});
-    		soilButtonW.addActionListener( new ActionListener() {
-    			public void actionPerformed(java.awt.event.ActionEvent e) {
-    				soilButtonWAction();
-    			}
-    		});
-    		treeButtonN.addActionListener( new ActionListener() {
-    			public void actionPerformed(java.awt.event.ActionEvent e) {
-    				treeButtonNAction();
-    			}
-    		});
-    		treeButtonE.addActionListener( new ActionListener() {
-    			public void actionPerformed(java.awt.event.ActionEvent e) {
-    				treeButtonEAction();
-    			}
-    		});
-    		treeButtonS.addActionListener( new ActionListener() {
-    			public void actionPerformed(java.awt.event.ActionEvent e) {
-    				treeButtonSAction();
-    			}
-    		});
-    		treeButtonW.addActionListener( new ActionListener() {
-    			public void actionPerformed(java.awt.event.ActionEvent e) {
-    				treeButtonWAction();
-    			}
-    		});
-    		waterButtonN.addActionListener( new ActionListener() {
-    			public void actionPerformed(java.awt.event.ActionEvent e) {
-    				waterButtonNAction();
-    			}
-    		});
-    		waterButtonE.addActionListener( new ActionListener() {
-    			public void actionPerformed(java.awt.event.ActionEvent e) {
-    				waterButtonEAction();
-    			}
-    		});
-    		waterButtonS.addActionListener( new ActionListener() {
-    			public void actionPerformed(java.awt.event.ActionEvent e) {
-    				waterButtonSAction();
-    			}
-    		});
-    		waterButtonW.addActionListener( new ActionListener() {
-    			public void actionPerformed(java.awt.event.ActionEvent e) {
-    				waterButtonWAction();
-    			}
-    		});
-    	}
-
-    	protected void waterButtonSAction() {
-    		try {
-				map.moveCursorDownAndSet(ElementFactory.createWaterElement());
-			}
-    		catch (CursorBeyondMapException e) {
-				e.printStackTrace();
-			}
-    		printer.printAll();
     	}
     	
-    	protected void waterButtonWAction() {
-    		try {
-				map.moveCursorLeftAndSet(ElementFactory.createWaterElement());
-			}
-    		catch (CursorBeyondMapException e) {
-				e.printStackTrace();
-			}
-    		printer.printAll();
-    	}
-
-    	protected void waterButtonEAction() {
-    		try {
-				map.moveCursorRightAndSet(ElementFactory.createWaterElement());
-			}
-    		catch (CursorBeyondMapException e) {
-				e.printStackTrace();
-			}
-    		printer.printAll();
-    	}
-
-    	protected void waterButtonNAction() {
-    		try {
-				map.moveCursorUpAndSet(ElementFactory.createWaterElement());
-			}
-    		catch (CursorBeyondMapException e) {
-				e.printStackTrace();
-			}
-    		printer.printAll();
-    	}
-
-    	protected void treeButtonAction() {
+    	private Direction askForDirection() {
+    		String directionStr 
+			= JOptionPane.showInputDialog("Direction (N,E,S,W):");
+		
+    		Direction direction;
     		
+			if (directionStr.equals("N"))
+				direction = Direction.NORTH;
+			else if (directionStr.equals("E"))
+				direction = Direction.EAST;
+			else if (directionStr.equals("S"))
+				direction = Direction.SOUTH;
+			else if (directionStr.equals("W"))
+				direction = Direction.WEST;
+			else {
+				JOptionPane.showMessageDialog(this, "Bad argument, sorry!", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
+			return direction;
     	}
     	
-    	protected void treeButtonWAction() {
-    		try {
-				map.moveCursorLeftAndSet(ElementFactory.createTreeElement());
+    	private MarkerPosition askForMarkerPosition() {
+			String markerPositionStr 
+			= JOptionPane.showInputDialog("Marker (L,R):");
+		
+			MarkerPosition markerPosition;
+			
+			if (markerPositionStr.equals("L"))
+				markerPosition = MarkerPosition.LEFT;
+			else if (markerPositionStr.equals("R"))
+				markerPosition = MarkerPosition.RIGHT;
+			else {
+				JOptionPane.showMessageDialog(this, "Bad argument, sorry!", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				return null;
 			}
-    		catch (CursorBeyondMapException e) {
-				e.printStackTrace();
-			}
-    		printer.printAll();
+			
+			return markerPosition;
     	}
 
-    	protected void treeButtonSAction() {
-    		try {
-				map.moveCursorDownAndSet(ElementFactory.createTreeElement());
-			}
-    		catch (CursorBeyondMapException e) {
-				e.printStackTrace();
-			}
-    		printer.printAll();
-    	}
-
-    	protected void treeButtonEAction() {
-    		try {
-				map.moveCursorRightAndSet(ElementFactory.createTreeElement());
-			}
-    		catch (CursorBeyondMapException e) {
-				e.printStackTrace();
-			}
-    		printer.printAll();
-    	}
-
-    	protected void treeButtonNAction() {
-    		try {
-				map.moveCursorUpAndSet(ElementFactory.createTreeElement());
-			}
-    		catch (CursorBeyondMapException e) {
-				e.printStackTrace();
-			}
-    		printer.printAll();
-    	}
-
-    	protected void soilButtonAction() {
-    		
-    	}
-    	
-    	protected void soilButtonWAction() {
-    		try {
-				map.moveCursorLeftAndSet(ElementFactory.createSoilElement());
-			}
-    		catch (CursorBeyondMapException e) {
-				e.printStackTrace();
-			}
-    		printer.printAll();
-    	}
-
-    	protected void soilButtonSAction() {
-    		try {
-				map.moveCursorDownAndSet(ElementFactory.createSoilElement());
-			}
-    		catch (CursorBeyondMapException e) {
-				e.printStackTrace();
-			}
-    		printer.printAll();
-    	}
-
-    	protected void soilButtonEAction() {
-    		try {
-				map.moveCursorRightAndSet(ElementFactory.createSoilElement());
-			}
-    		catch (CursorBeyondMapException e) {
-				e.printStackTrace();
-			}
-    		printer.printAll();
-    	}
-
-    	protected void soilButtonNAction() {
-    		try {
-				map.moveCursorUpAndSet(ElementFactory.createSoilElement());
-			}
-    		catch (CursorBeyondMapException e) {
-				e.printStackTrace();
-			}
-    		printer.printAll();
-    	}
-
-    	protected void sandButtonAction() {
-    		
-    	}
-    	
-    	protected void sandButtonWAction() {
-    		try {
-				map.moveCursorLeftAndSet(ElementFactory.createSandElement());
-			}
-    		catch (CursorBeyondMapException e) {
-				e.printStackTrace();
-			}
-    		printer.printAll();
-    	}
-
-    	protected void sandButtonSAction() {
-    		try {
-				map.moveCursorDownAndSet(ElementFactory.createSandElement());
-			}
-    		catch (CursorBeyondMapException e) {
-				e.printStackTrace();
-			}
-    		printer.printAll();
-    	}
-
-    	protected void sandButtonEAction() {
-    		try {
-				map.moveCursorRightAndSet(ElementFactory.createSandElement());
-			}
-    		catch (CursorBeyondMapException e) {
-				e.printStackTrace();
-			}
-    		printer.printAll();
-    	}
-
-    	protected void sandButtonNAction() {
-    		try {
-				map.moveCursorUpAndSet(ElementFactory.createSandElement());
-			}
-    		catch (CursorBeyondMapException e) {
-				e.printStackTrace();
-			}
-    		printer.printAll();
-    	}
-
-    	protected void grassButtonAction() {
-    		
-    	}
-
-    	protected void grassButtonWAction() {
-    		try {
-				map.moveCursorLeftAndSet(ElementFactory.createGrassElement());
-			}
-    		catch (CursorBeyondMapException e) {
-				e.printStackTrace();
-			}
-    		printer.printAll();
-    	}
-
-    	protected void grassButtonSAction() {
-    		try {
-				map.moveCursorDownAndSet(ElementFactory.createGrassElement());
-			}
-    		catch (CursorBeyondMapException e) {
-				e.printStackTrace();
-			}
-    		printer.printAll();
-    	}
-
-    	protected void grassButtonEAction() {
-    		try {
-				map.moveCursorRightAndSet(ElementFactory.createGrassElement());
-			}
-    		catch (CursorBeyondMapException e) {
-				e.printStackTrace();
-			}
-    		printer.printAll();
-    	}
-
-    	protected void grassButtonNAction() {
-    		try {
-				map.moveCursorUpAndSet(ElementFactory.createGrassElement());
-			}
-    		catch (CursorBeyondMapException e) {
-				e.printStackTrace();
-			}
-    		printer.printAll();
-    	}
+		protected void gateButtonAction(String gateName) {
+			Direction direction = askForDirection();
+			if (direction == null) return;
+			
+			MarkerPosition markerPosition = askForMarkerPosition();
+			if (markerPosition == null) return;
+			
+			Gate norGate = new Gate(
+					drawingPanel.getGraphics(),
+					startPoint,
+					direction,
+					markerPosition,
+					gateName
+			);
+			startPoint = norGate.draw();
+		}
+		
+		protected void wireButtonAction() {
+			Direction direction = askForDirection();
+			if (direction == null) return;
+			
+			Wire wire = new Wire(
+					drawingPanel.getGraphics(),
+					startPoint,
+					direction
+			);
+			
+			startPoint = wire.draw();
+		}
 }
