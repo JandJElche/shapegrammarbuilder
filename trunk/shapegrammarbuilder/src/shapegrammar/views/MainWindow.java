@@ -94,7 +94,7 @@ public class MainWindow extends JFrame {
                 norGateButton = new JButton("NOR");
                 wireButton = new JButton("Wire");
                 
-                gotoLastGateButton = new JButton("Go to last gate's gree slot");
+                gotoLastGateButton = new JButton("Go to last gate's free slot");
         }
         
         private void addComponents() {
