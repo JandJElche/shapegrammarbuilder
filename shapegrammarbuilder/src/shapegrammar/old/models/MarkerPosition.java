@@ -1,4 +1,4 @@
-package shapegrammar.models;
+package shapegrammar.old.models;
 
 public enum MarkerPosition {
 	LEFT,
