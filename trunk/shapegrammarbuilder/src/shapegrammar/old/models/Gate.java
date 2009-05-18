@@ -1,10 +1,10 @@
-package shapegrammar.models;
+package shapegrammar.old.models;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 
-import shapegrammar.configs.Config;
+import shapegrammar.old.configs.Config;
 
 public class Gate {
 

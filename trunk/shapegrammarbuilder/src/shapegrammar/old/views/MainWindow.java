@@ -1,4 +1,4 @@
-package shapegrammar.views;
+package shapegrammar.old.views;
 
 import java.awt.BorderLayout;
 import java.awt.Point;
@@ -13,11 +13,11 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.TitledBorder;
 
-import shapegrammar.configs.Config;
-import shapegrammar.models.Direction;
-import shapegrammar.models.Gate;
-import shapegrammar.models.MarkerPosition;
-import shapegrammar.models.Wire;
+import shapegrammar.old.configs.Config;
+import shapegrammar.old.models.Direction;
+import shapegrammar.old.models.Gate;
+import shapegrammar.old.models.MarkerPosition;
+import shapegrammar.old.models.Wire;
 
 @SuppressWarnings("serial")
 public class MainWindow extends JFrame {

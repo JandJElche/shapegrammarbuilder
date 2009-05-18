@@ -1,4 +1,4 @@
-package shapegrammar.configs;
+package shapegrammar.old.configs;
 
 import java.awt.*;
 
